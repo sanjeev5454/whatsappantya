@@ -1,0 +1,259 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+/*Route::get('/', function () {
+    return view('welcome');
+});*/
+//die('Under maintenance');
+Auth::routes();
+
+Route::get('autologin', function () {
+        return redirect()->intended('/dashboard');
+    });
+Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
+Route::get('/auth/google', 'UserController@redirectToGoogle');
+Route::get('/auth/google/callback', 'UserController@handleGoogleCallback');
+Route::get('/', 'HomeController@index')->name('master');
+Route::get('/login',['as'=>'/login','uses'=>'UserController@getLogin']);
+Route::post('/login',['as'=>'login','uses'=>'UserController@postLogin']);
+Route::get('/forgot-password',['as'=>'forgot-password','uses'=>'UserController@forgotPassword']);
+Route::post('/forgot_password',['as'=>'forgot_password','uses'=>'UserController@forgot_password']);
+Route::get('/reset_password/{id}',['as'=>'reset_password','uses'=>'UserController@reset_password']);
+Route::post('/resetPassword',['as'=>'resetPassword','uses'=>'UserController@resetPassword']);
+Route::get('/ajaxUserlogin/{name}/{email}/{permissionId}',['as'=>'ajaxUserlogin','uses'=>'UserController@ajaxUserlogin']);
+Route::get('whatsapp/whatsappsend',['as'=>'whatsappsend','uses'=>'whatsapp\DashboardController@whatsappsend']);
+Route::get('whatsapp/whatsappsendmultiple',['as'=>'whatsappsendmultiple','uses'=>'whatsapp\DashboardController@whatsappsendmultiple']);
+Route::get('whatsapp/message-recurring',['as'=>'messagerecurring','uses'=>'whatsapp\DashboardController@messagerecurring']);
+Route::get('whatsapp/whatsappsendEveryday',['as'=>'whatsappsendEveryday','uses'=>'whatsapp\DashboardController@whatsappsendEveryday']);
+Route::get('whatsapp/whatsappsendDayofWeek',['as'=>'whatsappsendDayofWeek','uses'=>'whatsapp\DashboardController@whatsappsendDayofWeek']);
+Route::get('whatsapp/whatsappsendDayofMonth',['as'=>'whatsappsendDayofMonth','uses'=>'whatsapp\DashboardController@whatsappsendDayofMonth']);
+Route::get('whatsapp/whatsappsendDayofQuarter',['as'=>'whatsappsendDayofQuarter','uses'=>'whatsapp\DashboardController@whatsappsendDayofQuarter']);
+Route::get('whatsapp/whatsappsendDayofYearly',['as'=>'whatsappsendDayofYearly','uses'=>'whatsapp\DashboardController@whatsappsendDayofYearly']);
+Route::get('whatsapp/whatsappsendOneTimeMessage',['as'=>'whatsappsendOneTimeMessage','uses'=>'whatsapp\DashboardController@whatsappsendOneTimeMessage']);
+
+Route::get('purchaseorder/whatsappstatusupdatepo',['as'=>'whatsappstatusupdatepo','uses'=>'purchaseorder\PurchaseOrderController@whatsappstatusupdatepo']);
+Route::get('whatsapp/whatsappstatusupdatesent',['as'=>'whatsappstatusupdatesent','uses'=>'whatsapp\DashboardController@whatsappstatusupdatesent']);
+
+Route::group(['middleware'=>['auth']],function(){
+
+Route::get('/',['as'=>'dashboard','uses'=>'DashboardController@index']);
+Route::get('/dashboard',['as'=>'dashboard','uses'=>'DashboardController@index']);
+Route::get('purchaseorder/',['as'=>'dashboard','uses'=>'purchaseorder\DashboardController@index']);
+Route::get('purchaseorder/dashboard',['as'=>'dashboard','uses'=>'purchaseorder\DashboardController@index']);
+Route::get('purchaseorder/user/profile',['as'=>'profile','uses'=>'purchaseorder\UserController@editProfile']);
+Route::get('purchaseorder/user/setting',['as'=>'setting','uses'=>'purchaseorder\UserController@Setting']);
+Route::post('purchaseorder/user/profileUpdate',['as'=>'profileUpdate','uses'=>'purchaseorder\UserController@profileUpdate']);
+Route::post('purchaseorder/user/settingUpdate',['as'=>'settingUpdate','uses'=>'purchaseorder\UserController@settingUpdate']);
+Route::get('purchaseorder/vendor-listing',['as'=>'vendor-listing','uses'=>'purchaseorder\VendorController@vendorListing']);
+Route::get('purchaseorder/staff-listing',['as'=>'staff-listing','uses'=>'purchaseorder\UserController@staffListing']);
+Route::get('purchaseorder/add-vendor',['as'=>'add-vendor','uses'=>'purchaseorder\VendorController@addVendor']);
+Route::get('purchaseorder/add-staff',['as'=>'add-staff','uses'=>'purchaseorder\UserController@addStaff']);
+Route::post('purchaseorder/staffDataPost',['as'=>'staffDataPost','uses'=>'purchaseorder\UserController@staffDataPost']);
+Route::post('purchaseorder/vendorDataPost',['as'=>'vendorDataPost','uses'=>'purchaseorder\VendorController@vendorDataPost']);
+Route::get('purchaseorder/vendorDelete/{id}',['as'=>'vendorDelete','uses'=>'purchaseorder\VendorController@vendorDelete']);
+Route::get('purchaseorder/staffDelete/{id}',['as'=>'staffDelete','uses'=>'purchaseorder\UserController@staffDelete']);
+Route::get('purchaseorder/edit-vendor/{id}',['as'=>'edit-vendor','uses'=>'purchaseorder\VendorController@editVendor']);
+Route::get('purchaseorder/edit-staff/{id}',['as'=>'edit-staff','uses'=>'purchaseorder\UserController@editStaff']);
+Route::post('purchaseorder/staffDataUpdate/{id}',['as'=>'staffDataUpdate','uses'=>'purchaseorder\UserController@staffDataUpdate']);
+Route::post('purchaseorder/vendorDataUpdate/{id}',['as'=>'vendorDataUpdate','uses'=>'purchaseorder\VendorController@vendorDataUpdate']);
+Route::get('purchaseorder/delivery-address',['as'=>'delivery-address','uses'=>'purchaseorder\AddressController@deliveryAddress']);
+Route::get('purchaseorder/add-address',['as'=>'add-address','uses'=>'purchaseorder\AddressController@addAddress']);
+Route::post('purchaseorder/addressDataPost',['as'=>'addressDataPost','uses'=>'purchaseorder\AddressController@addressDataPost']);
+Route::get('purchaseorder/delete-address/{id}',['as'=>'delete-address','uses'=>'purchaseorder\AddressController@addressDelete']);
+Route::get('purchaseorder/edit-address/{id}',['as'=>'edit-address','uses'=>'purchaseorder\AddressController@editAddress']);
+Route::post('purchaseorder/addressDataUpdate/{id}',['as'=>'addressDataUpdate','uses'=>'purchaseorder\AddressController@addressDataUpdate']);
+Route::get('purchaseorder/default-address/{id}',['as'=>'default-address','uses'=>'purchaseorder\AddressController@defaultAddress']);
+Route::get('purchaseorder/item-listing',['as'=>'item-listing','uses'=>'purchaseorder\ItemController@itemListing']);
+Route::get('purchaseorder/add-item',['as'=>'add-item','uses'=>'purchaseorder\ItemController@addItem']);
+Route::get('purchaseorder/edit-item/{id}',['as'=>'edit-item','uses'=>'purchaseorder\ItemController@editItem']);
+Route::post('purchaseorder/itemDataPost',['as'=>'itemDataPost','uses'=>'purchaseorder\ItemController@itemDataPost']);
+Route::get('purchaseorder/itemDelete/{id}',['as'=>'itemDelete','uses'=>'purchaseorder\ItemController@itemDelete']);
+Route::post('purchaseorder/itemDataUpdate/{id}',['as'=>'itemDataUpdate','uses'=>'purchaseorder\ItemController@itemDataUpdate']);
+Route::get('purchaseorder/purchase-order-listing',['as'=>'purchase-order-listing','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListing']);
+Route::get('purchaseorder/purchase-order-listing-draft',['as'=>'purchase-order-listing-draft','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingDraft']);
+Route::get('purchaseorder/purchase-order-listing-awaiting-approval',['as'=>'purchase-order-listing-awaiting-approval','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingAwaitingApproval']);
+Route::get('purchaseorder/purchase-order-listing-approval',['as'=>'purchase-order-listing-approval','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingApproval']);
+Route::get('purchaseorder/purchase-order-listing-po-wise',['as'=>'purchase-order-listing-po-wise','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingPoWise']);
+Route::get('purchaseorder/purchase-order-listing-intake-form',['as'=>'purchase-order-listing-intake-form','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingIntakeForm']);
+Route::get('purchaseorder/purchase-order-listing-invoice-wise',['as'=>'purchase-order-listing-invoice-wise','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingInvoiceWise']);
+Route::get('purchaseorder/purchase-order-listing-item-wise',['as'=>'purchase-order-listing-item-wise','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderListingItemWise']);
+Route::get('purchaseorder/purchase-order-pending-list',['as'=>'purchase-order-pending-list','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderPendingList']);
+Route::get('purchaseorder/add-purchase-order',['as'=>'add-purchase-order','uses'=>'purchaseorder\PurchaseOrderController@addPurchaseOrder']);
+Route::get('purchaseorder/ajaxItemData/{id}',['as'=>'ajaxItemData','uses'=>'purchaseorder\ItemController@ajaxItemData']);
+Route::get('purchaseorder/ajaxPendingList/{type}/{vendor}',['as'=>'ajaxPendingList','uses'=>'purchaseorder\PurchaseOrderController@ajaxPendingList']);
+Route::get('purchaseorder/ajaxAddressData/{id}',['as'=>'ajaxAddressData','uses'=>'purchaseorder\AddressController@ajaxAddressData']);
+Route::post('purchaseorder/new-purchase-order',['as'=>'new-purchase-order','uses'=>'purchaseorder\PurchaseOrderController@NewPurchaseOrder']);
+Route::post('purchaseorder/new-purchase-order-update/{id}',['as'=>'new-purchase-order-update','uses'=>'purchaseorder\PurchaseOrderController@NewPurchaseOrderUpdate']);
+Route::get('purchaseorder/purchaseDelete/{id}',['as'=>'purchaseDelete','uses'=>'purchaseorder\PurchaseOrderController@purchaseDelete']);
+Route::get('purchaseorder/edit-purchase-order/{id}',['as'=>'edit-purchase-order','uses'=>'purchaseorder\PurchaseOrderController@editPurchaseOrder']);
+Route::get('purchaseorder/view-purchase-order/{id}',['as'=>'view-purchase-order','uses'=>'purchaseorder\PurchaseOrderController@viewPurchaseOrder']);
+Route::get('purchaseorder/purchase-order-billed/{id}',['as'=>'purchase-order-billed','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderBilled']);
+Route::post('purchaseorder/purchase-order-send/{id}',['as'=>'purchase-order-send','uses'=>'purchaseorder\PurchaseOrderController@purchaseOrderSend']);
+Route::get('purchaseorder/ajaxTypeheadData/{id}',['as'=>'ajaxTypeheadData','uses'=>'purchaseorder\PurchaseOrderController@ajaxTypeheadData']);
+Route::get('purchaseorder/ajaxTypeheadData2/{id}/{list}',['as'=>'ajaxTypeheadData2','uses'=>'purchaseorder\PurchaseOrderController@ajaxTypeheadData2']);
+Route::get('purchaseorder/ajaxItemQuantityUpdateData/{qty_val}/{order_number}/{item_number}/{order}/{received_date}/{invoice_number}',['as'=>'ajaxItemQuantityUpdateData','uses'=>'purchaseorder\PurchaseOrderController@ajaxItemQuantityUpdateData']);
+Route::get('purchaseorder/generate-pdf/{id}','purchaseorder\PurchaseOrderController@generatePDF');
+Route::get('purchaseorder/vendor-desktop-generate-pdf/{id}','purchaseorder\PurchaseOrderController@generatePDFVendorDesktop');
+Route::get('purchaseorder/vendor-mobile-generate-pdf/{id}','purchaseorder\PurchaseOrderController@generatePDFVendorMobile');
+Route::get('purchaseorder/staff-mobile-generate-pdf/{id}','purchaseorder\PurchaseOrderController@generatePDFStaffMobile');
+Route::get('purchaseorder/staff-desktop-generate-pdf/{id}','purchaseorder\PurchaseOrderController@generatePDFStaffDesktop');
+Route::get('purchaseorder/purchaseorderapprovedsentAdmin/{id}','purchaseorder\PurchaseOrderController@purchaseorderapprovedsentAdmin');
+Route::get('purchaseorder/purchaseorderapprovedsentVendor/{id}','purchaseorder\PurchaseOrderController@purchaseorderapprovedsentVendor');
+Route::get('purchaseorder/purchaseorderapprovedsentStaff/{id}','purchaseorder\PurchaseOrderController@purchaseorderapprovedsentStaff');
+Route::get('purchaseorder/autocomplete','purchaseorder\PurchaseOrderController@autocomplete');
+Route::get('purchaseorder/purchaseorderapproved/{id}','purchaseorder\PurchaseOrderController@purchaseorderapproved');
+Route::post('purchaseorder/purchaseorderapprovedsent/{id}','purchaseorder\PurchaseOrderController@purchaseorderapprovedsent');
+Route::post('purchaseorder/ajaxaddressDataPost','purchaseorder\PurchaseOrderController@ajaxaddressDataPost');
+Route::get('purchaseorder/ajaxGetaddressDataPost','purchaseorder\PurchaseOrderController@ajaxGetaddressDataPost');
+Route::get('purchaseorder/ajaxItemIntakeForm/{id}/{vendor_name}/{row_data}','purchaseorder\PurchaseOrderController@ajaxItemIntakeForm');
+Route::post('purchaseorder/purchaseorderIntake',['as'=>'purchaseorderIntake','uses'=>'purchaseorder\PurchaseOrderController@purchaseorderIntake']);
+Route::get('purchaseorder/ajaxinvoiceApprove/{id}','purchaseorder\PurchaseOrderController@ajaxinvoiceApprove');
+Route::post('purchaseorder/purchaseMessageReceiveData',['as'=>'purchaseMessageReceiveData','uses'=>'purchaseorder\PurchaseOrderController@purchaseMessageReceiveData']);
+Route::get('purchaseorder/po-wise-pdf/{vendor}','purchaseorder\PurchaseOrderController@poWisepdf');
+Route::get('purchaseorder/item-wise-pdf/{vendor}','purchaseorder\PurchaseOrderController@itemWisepdf');
+
+
+
+//Whatsapp
+Route::get('whatsapp/',['as'=>'dashboard','uses'=>'whatsapp\DashboardController@index']);
+Route::get('whatsapp/templates',['as'=>'dashboard','uses'=>'whatsapp\DashboardController@index']);
+Route::get('whatsapp/message-planner',['as'=>'RecurringMessageListing','uses'=>'whatsapp\DashboardController@RecurringMessageListing']);
+Route::get('whatsapp/add-a-template',['as'=>'addMessage','uses'=>'whatsapp\DashboardController@addMessage']);
+Route::get('whatsapp/add-message-planner',['as'=>'addRecurringMessage','uses'=>'whatsapp\DashboardController@addRecurringMessage']);
+Route::post('whatsapp/savemessage',['as'=>'savemessage','uses'=>'whatsapp\DashboardController@savemessage']);
+Route::post('whatsapp/saverecurringmessage',['as'=>'saverecurringmessage','uses'=>'whatsapp\DashboardController@saverecurringmessage']);
+Route::get('whatsapp/view-a-template/{id}',['as'=>'viewMessage','uses'=>'whatsapp\DashboardController@viewMessage']);
+Route::get('whatsapp/edit-a-template/{id}',['as'=>'editMessage','uses'=>'whatsapp\DashboardController@editMessage']);
+Route::get('whatsapp/edit-message-planner/{id}',['as'=>'editRecurringMessage','uses'=>'whatsapp\DashboardController@editRecurringMessage']);
+Route::get('whatsapp/copy-message-planner/{id}',['as'=>'copyRecurringMessage','uses'=>'whatsapp\DashboardController@copyRecurringMessage']);
+Route::post('whatsapp/updatemessage',['as'=>'updatemessage','uses'=>'whatsapp\DashboardController@updatemessage']);
+Route::post('whatsapp/updatesendmessagemultiple',['as'=>'updatesendmessagemultiple','uses'=>'whatsapp\DashboardController@updatesendmessagemultiple']);
+Route::post('whatsapp/updaterecurringmessage',['as'=>'updaterecurringmessage','uses'=>'whatsapp\DashboardController@updaterecurringmessage']);
+Route::get('whatsapp/delete-message/{id}',['as'=>'deletemessage','uses'=>'whatsapp\DashboardController@destroy']);
+Route::get('whatsapp/create-a-group',['as'=>'addContact','uses'=>'whatsapp\DashboardController@addContact']);
+Route::post('whatsapp/savecontact',['as'=>'savecontact','uses'=>'whatsapp\DashboardController@savecontact']);
+Route::get('whatsapp/groups',['as'=>'contactListing','uses'=>'whatsapp\DashboardController@contactListing']);
+Route::get('whatsapp/delete-contact/{id}',['as'=>'deleteContact','uses'=>'whatsapp\DashboardController@deleteContact']);
+Route::get('whatsapp/edit-a-group/{id}',['as'=>'editContact','uses'=>'whatsapp\DashboardController@editContact']);
+Route::post('whatsapp/updatecontact',['as'=>'updatecontact','uses'=>'whatsapp\DashboardController@updatecontact']);
+Route::get('whatsapp/add-send-message',['as'=>'addSendMessage','uses'=>'whatsapp\DashboardController@addSendMessage']);
+Route::post('whatsapp/savesendmessage',['as'=>'savesendmessage','uses'=>'whatsapp\DashboardController@savesendmessage']);
+Route::post('whatsapp/copysendmessage',['as'=>'copysendmessage','uses'=>'whatsapp\DashboardController@copysendmessage']);
+Route::post('whatsapp/sendmessagesave',['as'=>'sendmessagesave','uses'=>'whatsapp\DashboardController@sendmessagesave']);
+Route::get('whatsapp/send-message-listing',['as'=>'sendmessagelisting','uses'=>'whatsapp\DashboardController@sendmessagelisting']);
+Route::get('whatsapp/delete-send-message/{id}',['as'=>'deletesendmessage','uses'=>'whatsapp\DashboardController@deletesendmessage']);
+Route::get('whatsapp/edit-send-message/{id}',['as'=>'editsendmessage','uses'=>'whatsapp\DashboardController@editsendmessage']);
+Route::post('whatsapp/updatesendmessage',['as'=>'updatesendmessage','uses'=>'whatsapp\DashboardController@updatesendmessage']);
+Route::post('whatsapp/importContact',['as'=>'importContact','uses'=>'whatsapp\DashboardController@importContact']);
+Route::post('whatsapp/importContactDetails',['as'=>'importContactDetails','uses'=>'whatsapp\DashboardController@importContactDetails']);
+Route::get('whatsapp/settings',['as'=>'accountManagement','uses'=>'whatsapp\DashboardController@accountManagement']);
+Route::get('whatsapp/add-a-setting',['as'=>'addAccountManagement','uses'=>'whatsapp\DashboardController@addAccountManagement']);
+Route::post('whatsapp/saveaccountmanagement',['as'=>'saveaccountmanagement','uses'=>'whatsapp\DashboardController@saveaccountmanagement']);
+Route::get('whatsapp/edit-a-setting/{id}',['as'=>'editAccountManagement','uses'=>'whatsapp\DashboardController@editAccountManagement']);
+Route::post('whatsapp/updateaccountmanagement',['as'=>'updateaccountmanagement','uses'=>'whatsapp\DashboardController@updateaccountmanagement']);
+Route::get('whatsapp/delete-account-management/{id}',['as'=>'deleteaccountmanagement','uses'=>'whatsapp\DashboardController@deleteaccountmanagement']);
+Route::get('whatsapp/recurring-delete-message/{id}',['as'=>'recurringdeletemessage','uses'=>'whatsapp\DashboardController@recurringdeletemessage']);
+Route::get('/ajaxaccountdefault/{id}',['as'=>'ajaxaccountdefault','uses'=>'whatsapp\DashboardController@ajaxaccountdefault']);
+Route::get('whatsapp/recurring-pause-task/{id}/{status}',['as'=>'ajaxrecurringpausetask','uses'=>'whatsapp\DashboardController@ajaxrecurringpausetask']);
+Route::post('whatsapp/message-recurring-update-date',['as'=>'messagerecurringupdatedate','uses'=>'whatsapp\DashboardController@messagerecurringupdatedate']);
+Route::get('whatsapp/sample-download-file',['as'=>'sampledownloadfile','uses'=>'whatsapp\DashboardController@sampledownloadfile']);
+Route::get('whatsapp/reports',['as'=>'recurringreport','uses'=>'whatsapp\DashboardController@recurringreport']);
+Route::get('whatsapp/recurring-report/{id}',['as'=>'recurringreport','uses'=>'whatsapp\DashboardController@recurringreport']);
+Route::get('whatsapp/contacts',['as'=>'contactdetailslisting','uses'=>'whatsapp\DashboardController@contactdetailslisting']);
+Route::get('whatsapp/add-a-contact',['as'=>'addcontactdetails','uses'=>'whatsapp\DashboardController@addcontactdetails']);
+Route::get('whatsapp/edit-a-contact/{id}',['as'=>'editdetailscontact','uses'=>'whatsapp\DashboardController@editdetailscontact']);
+Route::post('whatsapp/savecontactdetails',['as'=>'savecontactdetails','uses'=>'whatsapp\DashboardController@savecontactdetails']);
+Route::get('whatsapp/delete-contact-details/{id}',['as'=>'deletecontactdetails','uses'=>'whatsapp\DashboardController@deletecontactdetails']);
+Route::post('whatsapp/updatecontactdetails',['as'=>'updatecontactdetails','uses'=>'whatsapp\DashboardController@updatecontactdetails']);
+Route::get('whatsapp/ajaxTemplate/{id}',['as'=>'ajaxTemplate','uses'=>'whatsapp\DashboardController@ajaxTemplate']);
+Route::get('whatsapp/ajaxContactTemp/{id}/{rand_id}',['as'=>'ajaxContactTemp','uses'=>'whatsapp\DashboardController@ajaxContactTemp']);
+Route::get('whatsapp/ajaxTempData/{rand_id}',['as'=>'ajaxTempData','uses'=>'whatsapp\DashboardController@ajaxTempData']);
+Route::post('whatsapp/ajaxmessageplanner',['as'=>'ajaxmessageplanner','uses'=>'whatsapp\DashboardController@ajaxmessageplanner']);
+Route::get('whatsapp/whatsapp-message-planner/{id}',['as'=>'whatsappMessagePlanner','uses'=>'whatsapp\DashboardController@whatsappMessagePlanner']);
+Route::any('whatsapp/ajax_image_uploads',['as'=>'ajax_image_uploads','uses'=>'whatsapp\DashboardController@ajax_image_uploads']);
+Route::any('whatsapp/imagedatadelete_temp',['as'=>'imagedatadelete_temp','uses'=>'whatsapp\DashboardController@imagedatadelete_temp']);
+
+
+
+
+
+
+
+//DocX
+Route::get('document/',['as'=>'dashboard','uses'=>'document\DashboardController@index']);
+Route::get('document/dashboard',['as'=>'dashboard','uses'=>'document\DashboardController@index']);
+Route::post('document/dataSubmit','document\DashboardController@store')->name('dataSubmit');
+Route::post('document/pageRedirect', 'document\DashboardController@pageRedirect')->name('pageRedirect');
+Route::get('document/dataLinkRemove/{id}', 'document\DashboardController@dataLinkRemove')->name('dataLinkRemove');
+Route::get('document/dataRemove/{id}','document\DashboardController@destroy')->name('dataRemove');
+Route::post('document/imageUploads', 'document\DashboardController@imageUploads')->name('imageUploads');
+Route::post('document/emailSend', 'document\DashboardController@emailSend')->name('emailSend');
+Route::post('document/addLabel', 'document\DashboardController@addLabel')->name('addLabel');
+
+
+//Financial Summary
+
+Route::get('financialsummary/adduser', 'financialsummary\User\UserController@create')->name('adduser');
+Route::post('financialsummary/adduser', 'financialsummary\User\UserController@store')->name('adduserpost');
+Route::get('financialsummary/userlist','financialsummary\User\UserController@index')->name('userlist');	
+Route::get('financialsummary/useredit/{id}','financialsummary\User\UserController@edit')->name('useredit');
+Route::post('financialsummary/useredit/{id}','financialsummary\User\UserController@update')->name('usereditpost');
+Route::delete('financialsummary/userdelete/{id}','financialsummary\User\UserController@destroy')->name('userdelete');
+Route::post('financialsummary/dataSubmit','financialsummary\User\UserController@store')->name('dataSubmit');
+Route::post('financialsummary/AddAprilOpeningStock','financialsummary\User\UserController@AddAprilOpeningStock')->name('AddAprilOpeningStock');
+Route::post('financialsummary/AddCompany','financialsummary\User\UserController@AddCompany')->name('AddCompany');
+Route::post('financialsummary/dataSubmitExpensesX','financialsummary\User\UserController@dataSubmitExpensesX')->name('dataSubmitExpensesX');
+Route::post('financialsummary/ajaxExpensesX','financialsummary\User\UserController@ajaxExpensesX')->name('ajaxExpensesX');
+Route::post('financialsummary/ajaxFixedExpensesX','financialsummary\User\UserController@ajaxFixedExpensesX')->name('ajaxFixedExpensesX');
+Route::post('financialsummary/ajaxAverageExpensesX','financialsummary\User\UserController@ajaxAverageExpensesX')->name('ajaxAverageExpensesX');
+Route::post('financialsummary/ajaxStockAttributePurchaseX','financialsummary\User\StockPurchaseController@ajaxStockAttributePurchaseX')->name('ajaxStockAttributePurchaseX');
+Route::post('financialsummary/ajaxStockAttributePurchaseAddX','financialsummary\User\StockPurchaseController@ajaxStockAttributePurchaseAddX')->name('ajaxStockAttributePurchaseAddX');
+Route::get('financialsummary/dataRemoveStockX/{id}','financialsummary\User\StockPurchaseController@dataRemoveStockX')->name('dataRemoveStockX');
+Route::get('financialsummary/dataRemove/{id}','financialsummary\User\UserController@destroy')->name('dataRemove');
+Route::get('financialsummary/dataRemoveExpensesX/{id}','financialsummary\User\UserController@dataRemoveExpensesX')->name('dataRemoveExpensesX');
+Route::get('financialsummary/dataRemoveStock/{id}','financialsummary\User\StockPurchaseController@destroy')->name('dataRemoveStock');
+Route::get('financialsummary/dataRemoveSales/{id}','financialsummary\User\SaleController@destroy')->name('dataRemoveSales');
+Route::get('financialsummary/ajaxDropdownUpdate/{id}','financialsummary\DashboardController@ajaxDropdownUpdate')->name('ajaxDropdownUpdate');
+Route::get('financialsummary/ajaxAllProfitLossUpdate/{id}','financialsummary\User\ProfitLossController@ajaxAllProfitLossUpdate')->name('ajaxAllProfitLossUpdate');
+Route::get('financialsummary/ajaxCenterGraph/{id}','financialsummary\User\ProfitLossController@ajaxCenterGraph')->name('ajaxCenterGraph');
+
+
+
+
+Route::get('financialsummary/', 'financialsummary\DashboardController@index')->name('dashboard');
+Route::get('financialsummary/add-april-opening-stock', 'financialsummary\DashboardController@AddAprilOpeningStock')->name('add-april-opening-stock');
+Route::get('financialsummary/add-company', 'financialsummary\DashboardController@AddCompany')->name('add-company');
+Route::get('financialsummary/dashboard', 'financialsummary\DashboardController@index');
+Route::get('financialsummary/expenses-x', 'financialsummary\DashboardController@expensesX');
+Route::get('financialsummary/expenses-b', 'financialsummary\DashboardController@expensesB');
+Route::get('financialsummary/stock-purchase', 'financialsummary\User\StockPurchaseController@index');
+Route::get('financialsummary/stock-purchase-x', 'financialsummary\User\StockPurchaseController@StockPurchaseX');
+Route::get('financialsummary/stock-purchase-b', 'financialsummary\User\StockPurchaseController@StockPurchaseB');
+Route::get('financialsummary/sale', 'financialsummary\User\SaleController@index');
+Route::get('financialsummary/profit-loss', 'financialsummary\User\ProfitLossController@index');
+Route::get('financialsummary/all-profit-loss', 'financialsummary\User\ProfitLossController@AllProfitLoss');
+Route::post('financialsummary/dataSubmitStock','financialsummary\User\StockPurchaseController@store')->name('dataSubmitStock');
+Route::post('financialsummary/dataSubmitStockAttribute','financialsummary\User\StockPurchaseController@dataSubmitStockAttribute')->name('dataSubmitStockAttribute');
+Route::post('financialsummary/dataSubmitStockAttributePurchase','financialsummary\User\StockPurchaseController@dataSubmitStockAttributePurchase')->name('dataSubmitStockAttributePurchase');
+
+Route::post('financialsummary/dataSubmitStockX','financialsummary\User\StockPurchaseController@dataSubmitStockX')->name('dataSubmitStockX');
+Route::post('financialsummary/dataSubmitStockAttributeX','financialsummary\User\StockPurchaseController@dataSubmitStockAttributeX')->name('dataSubmitStockAttributeX');
+Route::post('financialsummary/dataSubmitStockAttributePurchaseX','financialsummary\User\StockPurchaseController@dataSubmitStockAttributePurchaseX')->name('dataSubmitStockAttributePurchaseX');
+
+Route::post('financialsummary/dataSubmitSales','financialsummary\User\SaleController@store')->name('dataSubmitSales');
+Route::post('financialsummary/dataSubmitSalesAttribute','financialsummary\User\SaleController@dataSubmitSalesAttribute')->name('dataSubmitSalesAttribute');
+
+
+
+});

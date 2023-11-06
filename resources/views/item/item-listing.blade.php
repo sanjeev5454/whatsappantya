@@ -1,0 +1,87 @@
+@extends('layout.app')
+@section('title', 'Item Listing')
+@section('content')
+
+@include('layout.partials.sidebar')
+<!-- Page -->
+<div class="page">
+      <div class="page-content">
+      
+        <!-- Panel Table Add Row -->
+        <div class="panel">
+          <header class="panel-heading">
+            <h3 class="panel-title">Item Management</h3>
+          </header>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-15">
+                  <a title="Add Item" href="{{ url('add-item') }}"><button id="addToTable" class="btn btn-primary" type="button">
+                    <i class="icon md-plus" aria-hidden="true"></i> Add Item
+                  </button></a>
+                </div>
+              </div>
+            </div>
+			<?php if(@Session::get('success')!=''){?>
+			
+			<div class="alert alert-success">
+			
+			<a href="javascript:void(0);" class="close" data-dismiss="alert">&times;</a>
+			
+			<?php echo Session::get('success');?>
+			
+			</div>
+			
+			<?php } ?>
+            <table class="table table-bordered table-hover table-striped" cellspacing="0" id="exampleAddRow">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item Name</th>
+                  <th>Item SKU</th>
+				  <th>Description</th>
+				  <th>Unit</th>
+				  <th>Price/Unit</th>
+				  <th>Vendor Name</th>
+				  <th>GST (in %)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+			  @if(!empty($item_data) && $item_data->count())
+			  @foreach($item_data as $key=>$data)
+                <tr class="gradeA">
+                  <td>{{ $key+1 }}</td>
+                  <td>{{ $data->item_name }}</td>
+                  <td>{{ $data->item_sku }}</td>
+				  <td>{{ $data->description }}</td>
+				  <td>{{ $data->unit }}</td>
+				  <td>{{ number_format($data->price,2) }}</td>
+				  <td>{{ getVendorName($data->vendor_id) }}</td>
+				  <td>{{ $data->gst }}</td>
+                  <td class="actions">
+                    <a href="{{ url('edit-item/'.$data->id) }}" class="btn btn-sm btn-icon btn-pure btn-default on-default edit-row"
+                      data-toggle="tooltip" data-original-title="Edit"><i class="icon md-edit" aria-hidden="true"></i></a>
+                    <a href="{{ url('itemDelete/'.$data->id) }}" onclick="return confirm('Are you sure to delete the row?');" class="btn btn-sm btn-icon btn-pure btn-default on-default remove-row"
+                      data-toggle="tooltip" data-original-title="Remove"><i class="icon md-delete" aria-hidden="true"></i></a>
+					  
+                  </td>
+                </tr>
+               @endforeach
+				@else
+				<tr>
+				<td colspan="10">There are no data.</td>
+				</tr>
+				@endif
+              </tbody>
+            </table>
+			{!! $item_data->links() !!}
+          </div>
+        </div>
+        <!-- End Panel Table Add Row -->
+
+      </div>
+    </div>
+<!-- End Page -->
+@endsection 
+

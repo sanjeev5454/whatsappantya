@@ -1,0 +1,61 @@
+@extends('layout.app')
+@section('title', 'Dashboard')
+@section('content')
+@include('layout.partials.sidebar') 
+<link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"  />
+<!-- Page -->
+<div class="page">
+  <div class="page-content container-fluid dashboard-wrap">
+    <div class="row1" data-plugin="matchHeight" data-by-row="true">
+      <center>
+        <h1>Welcome to the Dashboard</h1>
+      </center>
+      <div class="col-lg-12 mb-4">
+        <div class="p-4 rounded  h-400" style="text-align:center;">
+        <div class="dashboard-links">
+        <ul>
+        <li><a href="{{ url('purchaseorder') }}" target="_blank"><i class="fa fa-check"></i><span>Purchase Order</span></a></li>
+        <li><a class="" href="{{ url('financialsummary') }}" target="_blank"><i class="fa fa-cog"></i><span>Financial Summary</span></a></li>
+        <li><a class="" href="{{ url('document') }}" target="_blank"><i class="fa fa-paper-plane"></i><span>DocX</span></a></li>
+        <li><a class="" href="{{ url('whatsapp') }}" target="_blank"><i class="fa fa-whatsapp"></i><span>WhatsappX</span></a></li>
+        </ul>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Page -->
+<style>
+.btn-circle {
+  width: 45px;
+  height: 45px;
+  line-height: 45px;
+  text-align: center;
+  padding: 0;
+  border-radius: 50%;
+}
+.btn-circle i {
+  position: relative;
+  top: -1px;
+}
+.btn-circle-sm {
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  font-size: 0.9rem;
+}
+.btn-circle-lg {
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  font-size: 1.1rem;
+}
+.btn-circle-xl {
+  width: 140px;
+  height: 140px;
+  line-height: 70px;
+  font-size: 15px;
+}
+</style>
+@endsection 

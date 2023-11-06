@@ -1,0 +1,154 @@
+<div class="site-menubar">
+      <ul class="site-menu">
+        <li class="site-menu-item has-sub {{ (request()->is('whatsapp')) ? 'active' : (request()->is('whatsapp/dashboard')) ? 'active' : (request()->is('whatsapp/edit-message*')) ? 'active' : (request()->is('whatsapp/view-message*')) ? 'active' : '' }}">
+          <a href="{{ url('whatsapp/dashboard') }}">
+                  <i class="site-menu-icon md-apps" aria-hidden="true"></i>
+                  <span class="site-menu-title">Templates</span>
+                          
+              </a>
+          
+        </li>
+        
+        
+        
+		<li class="site-menu-item has-sub {{ (request()->is('whatsapp/add-message')) ? 'active' : '' }}">
+          <a href="{{ url('whatsapp/add-message') }}">
+                  <i class="site-menu-icon md-playlist-plus" aria-hidden="true"></i>
+                  <span class="site-menu-title">Add Template</span>
+                          
+              </a>
+          
+        </li>
+        
+        <li class="site-menu-item has-sub {{ (request()->is('whatsapp/recurring-message-listing')) ? 'active' : (request()->is('whatsapp/recurring-edit-message*')) ? 'active' : '' }}">
+          <a href="{{ url('whatsapp/recurring-message-listing') }}">
+                  <i class="site-menu-icon fa fa-cubes" aria-hidden="true"></i>
+                  <span class="site-menu-title">Schedule Messages</span>
+                          
+              </a>
+          
+        </li>
+        
+        
+        <li class="site-menu-item has-sub {{ (request()->is('whatsapp/add-recurring-message')) ? 'active' : '' }}">
+          <a href="{{ url('whatsapp/add-recurring-message') }}">
+                  <i class="site-menu-icon fa fa-cube" aria-hidden="true"></i>
+                  <span class="site-menu-title">Add a Schedule</span>
+                          
+              </a>
+          
+        </li>
+        
+        
+        <li class="site-menu-item has-sub {{ (request()->is('whatsapp/contact-details-listing')) ? 'active' : (request()->is('whatsapp/edit-details-contact*')) ? 'active' : '' }}">
+          <a class="" href="{{ url('whatsapp/contact-details-listing') }}">
+                  <i class="site-menu-icon md-accounts-alt" aria-hidden="true"></i>
+                  <span class="site-menu-title">Contacts Management</span>
+                          
+              </a>
+          
+        </li>
+		
+		<li class="site-menu-item has-sub {{ (request()->is('whatsapp/add-contact-details')) ? 'active' : '' }}">
+          <a class="" href="{{ url('whatsapp/add-contact-details') }}">
+                  <i class="site-menu-icon md-account-add" aria-hidden="true"></i>
+                  <span class="site-menu-title">Add Contacts</span>
+                          
+              </a>
+          
+        </li>
+       
+		
+		<li class="site-menu-item has-sub {{ (request()->is('whatsapp/contact-listing')) ? 'active' : (request()->is('whatsapp/edit-contact*')) ? 'active' : '' }}">
+          <a class="" href="{{ url('whatsapp/contact-listing') }}">
+                  <i class="site-menu-icon md-accounts-alt" aria-hidden="true"></i>
+                  <span class="site-menu-title">Groups</span>
+                          
+              </a>
+          
+        </li>
+		
+		<li class="site-menu-item has-sub {{ (request()->is('whatsapp/add-contact')) ? 'active' : '' }}">
+          <a class="" href="{{ url('whatsapp/add-contact') }}">
+                  <i class="site-menu-icon md-account-add" aria-hidden="true"></i>
+                  <span class="site-menu-title">Add Groups</span>
+                          
+              </a>
+          
+        </li>
+        
+        
+        
+        
+		
+		<!--<li class="site-menu-item has-sub {{ (request()->is('whatsapp/send-message-listing')) ? 'active' : (request()->is('whatsapp/edit-send-message*')) ? 'active' : '' }}">-->
+  <!--        <a href="{{ url('whatsapp/send-message-listing') }}">-->
+  <!--                <i class="site-menu-icon md-collection-item" aria-hidden="true"></i>-->
+  <!--                <span class="site-menu-title">Send Message List</span>-->
+  <!--            </a>-->
+          
+  <!--      </li>-->
+		
+		<!--<li class="site-menu-item has-sub {{ (request()->is('whatsapp/add-send-message')) ? 'active' : '' }}">-->
+  <!--        <a href="{{ url('whatsapp/add-send-message') }}">-->
+  <!--                <i class="site-menu-icon md-collection-plus" aria-hidden="true"></i>-->
+  <!--                <span class="site-menu-title">Add Send Message</span>-->
+  <!--            </a>-->
+          
+  <!--      </li>-->
+        
+        <li class="site-menu-item has-sub {{ (request()->is('whatsapp/recurring-report')) ? 'active' : (request()->is('whatsapp/recurring-report*')) ? 'active' : '' }}">
+          <a href="{{ url('whatsapp/recurring-report') }}">
+                  <i class="site-menu-icon fa fa-comments" aria-hidden="true"></i>
+                  <span class="site-menu-title">Reporting</span>
+                          
+              </a>
+          
+        </li>
+        
+		@if(Auth::user()->user_role==1)
+		<li class="site-menu-item has-sub {{ (request()->is('whatsapp/account-management')) ? 'active' :  (request()->is('whatsapp/edit-account-management*')) ? 'active' : '' }}">
+          <a class="" href="{{ url('whatsapp/account-management') }}">
+                  <i class="site-menu-icon md-settings" aria-hidden="true"></i>
+                  <span class="site-menu-title">Settings</span>
+                          
+              </a>
+          
+        </li>
+        
+        <!--<li class="site-menu-item has-sub {{ (request()->is('whatsapp/add-account-management')) ? 'active' : '' }}">-->
+        <!--  <a href="{{ url('whatsapp/add-account-management') }}">-->
+        <!--          <i class="site-menu-icon md-border-inner" aria-hidden="true"></i>-->
+        <!--          <span class="site-menu-title">Add Setting</span>-->
+        <!--      </a>-->
+          
+        <!--</li>-->
+		@endif
+		
+		<div class="dropdown-divider"></div>
+		<li class="site-menu-item has-sub">
+          <a onClick="handleSignoutClick()" href="{{ url('logout') }}">
+                  <i class="site-menu-icon md-power" aria-hidden="true"></i>
+                  <span class="site-menu-title">Logout</span>
+                  
+              </a>
+          
+        </li>
+		
+       
+      </ul></div>   
+	   <div class="site-gridmenu">
+      <div>
+        <div>
+          <ul>
+            
+            <li>
+              <a href="{{ url('document/dashboard') }}">
+                <i class="icon md-view-dashboard"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>

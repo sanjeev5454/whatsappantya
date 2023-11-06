@@ -1,0 +1,71 @@
+@extends('purchaseorder.layout.app')
+@section('title', 'Item Listing')
+@section('content')
+@include('purchaseorder.layout.partials.sidebar')
+<!-- Page -->
+<div class="page fix-table">
+      <div class="page-content container-fluid">      
+        <!-- Panel Table Add Row -->
+        <div class="panel">
+          <header class="panel-heading page-heading">
+            <h3 class="panel-title">Item Management</h3>
+            <div class="page-header-actions"><a title="Add Item" class="btn btn-primary" href="{{ url('purchaseorder/add-item') }}"><i class="icon md-plus" aria-hidden="true"></i>Add Item</a></div>
+          </header>
+          <div class="panel">            
+			<?php if(@Session::get('success')!=''){?>			
+			<div class="alert alert-success">			
+			<a href="javascript:void(0);" class="close" data-dismiss="alert">&times;</a>			
+			<?php echo Session::get('success');?>			
+			</div>			
+			<?php } ?>
+            <table class="table" cellspacing="0" id="exampleAddRow">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item Name</th>
+                  <th>Item SKU</th>
+				  <th>Description</th>
+				  <th>Unit</th>
+				  <th>Price/Unit</th>
+				  <th>Vendor Name</th>
+				  <th>GST (in %)</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+			  @if(!empty($item_data) && $item_data->count())
+			  @foreach($item_data as $key=>$data)
+                <tr class="gradeA">
+                  <td>{{ $key+1 }}</td>
+                  <td>{{ $data->item_name }}</td>
+                  <td>{{ $data->item_sku }}</td>
+				  <td>{{ $data->description }}</td>
+				  <td>{{ $data->unit }}</td>
+				  <td>{{ number_format($data->price,2) }}</td>
+				  <td>{{ getVendorName($data->vendor_id) }}</td>
+				  <td>{{ $data->gst }}</td>
+                  <td class="actions">
+                    <a href="{{ url('purchaseorder/edit-item/'.$data->id) }}" class="btn btn-sm btn-icon btn-pure btn-default on-default edit-row"
+                      data-toggle="tooltip" data-original-title="Edit"><i class="icon md-edit" aria-hidden="true"></i></a>
+                    <a href="{{ url('purchaseorder/itemDelete/'.$data->id) }}" onclick="return confirm('Are you sure to delete the row?');" class="btn btn-sm btn-icon btn-pure btn-default on-default remove-row"
+                      data-toggle="tooltip" data-original-title="Remove"><i class="icon md-delete" aria-hidden="true"></i></a>
+					  
+                  </td>
+                </tr>
+               @endforeach
+				@else
+				<tr>
+				<td colspan="10">There are no data.</td>
+				</tr>
+				@endif
+              </tbody>
+            </table>
+			
+          </div>
+        </div>
+        <!-- End Panel Table Add Row -->
+      </div>
+    </div>
+<!-- End Page -->
+@endsection 
+

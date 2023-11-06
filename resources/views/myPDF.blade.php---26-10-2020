@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+* {
+	margin:0;
+	padding:0;
+}
+body * {
+	font-size:10px;
+	padding:0;
+	margin:0;
+	font-family:Arial, Helvetica, sans-serif;
+}
+h2.first {
+	color: #000000;
+	font-size: 12pt;
+	text-align: center;
+}
+.lowercase {
+	text-transform: lowercase;
+}
+.uppercase {
+	text-transform: uppercase;
+}
+.capitalize {
+	text-transform: capitalize;
+}
+table {
+	width: 100%;
+	font-size:9px;
+	font-family:Arial, Helvetica, sans-serif;
+	margin-bottom:20px;
+}
+table, th, td {
+	padding:2px 5px;
+	text-align: center;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:9px;
+	border-collapse:collapse;
+}
+table th {
+	white-space:nowrap;
+}
+table.border-table {
+	border-collapse:collapse;
+}
+table.border-table th, table.border-table td {
+	border:.2px solid #000;
+	border-collapse:collapse;
+	vertical-align:middle;
+}
+</style>
+</head>
+<body>
+<!-- Page -->
+<div class="page">
+  <div class="page-content container-fluid">
+    <div class="row justify-content-md-center">
+      <div class="col-md-10">
+        <h2 class="first">Purchase Order</h2>
+        <div class="card">
+          <div class="card-body">
+            <table width="100%" class="first" cellpadding="10">
+              <tr>
+                <td width="40%"><div> {{ $purchase_data->contact }} <br>
+                    Attention:{{ $purchase_data->address['attention'] }} <br>
+                    Address <br>
+                    {{ vendorDetails($purchase_data->contact)->address }} </div></td>
+                <td width="33%"><div> <b>Purchase Order Date</b> <br>
+                    {{ $purchase_data->date }} <br>
+                    <b>Delivery Date</b> <br>
+                    {{ $purchase_data->delivery_date }} <br>
+                    <b>Purchase Order Number</b> <br>
+                    {{ 'PO-'.$purchase_data->order_number }} <br>
+                    @if($purchase_data->reference!='') <b>Reference</b> <br>
+                    {{ $purchase_data->reference }} </div>
+                  @endif </td>
+                <td width="27%"><div> {{ $purchase_data->contact }} <br>
+                    Attention:{{ $purchase_data->address['attention'] }} <br>
+                    Address <br>
+                    {{ vendorDetails($purchase_data->contact)->address }} </div></td>
+              </tr>
+            </table>
+            <br />
+            <br />
+            <br />
+            <table width="100%" border="0" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th width="15%" style="border-bottom:1px solid #CCCCCC;"><strong>Item</strong></th>
+                  <th style="border-bottom:1px solid #CCCCCC;"><strong>Item SKU</strong></th>
+                  <th width="10%" style="border-bottom:1px solid #CCCCCC;"><strong>Unit</strong></th>
+                  <th width="10%" align="right" style="border-bottom:1px solid #CCCCCC;"><strong>Qty</strong></th>
+                  <th align="right" style="border-bottom:1px solid #CCCCCC;"><strong>Price</strong></th>
+                  <th align="right" style="border-bottom:1px solid #CCCCCC;"><strong>Disc%</strong></th>
+                  <th align="right" style="border-bottom:1px solid #CCCCCC;"><strong>Amount</strong></th>
+                  <!--<td width="8%"><strong>GST%</strong></td>-->
+                </tr>
+              </thead>
+              <tbody>
+              
+              @for($i=1;$i<=count($purchase_data->row);$i++)
+              <tr>
+                <td width="15%">{{ ItemDetails($purchase_data->row[$i]['item']) }}</td>
+                <td>{{ $purchase_data->row[$i]['item_sku'] }}</td>
+                <td width="10%">{{ $purchase_data->row[$i]['unit'] }}</td>
+                <td width="10%" align="right">{{ $purchase_data->row[$i]['quantity'] }}</td>
+                <td align="right">{{ number_format($purchase_data->row[$i]['price'],2) }}</td>
+                <td align="right">{{ $purchase_data->row[$i]['disc'] }}</td>
+                <td align="right">{{ $purchase_data->row[$i]['amount'] }}</td>
+                <!--<td align="right">{{ $purchase_data->
+                row[$i]['gst'] }}
+                </td>
+                --> </tr>
+              @endfor
+              <tr>
+                <td colspan="5" style="border-top:1px solid #CCCCCC;"></td>
+                <td align="right" style="border-bottom:1px solid #CCCCCC; border-top:1px solid #CCCCCC;">Subtotal</td>
+                <td align="right" style="border-bottom:1px solid #CCCCCC; border-top:1px solid #CCCCCC;">{{ $purchase_data->subtotal }}</td>
+              </tr>
+			   <tr>
+                <td colspan="5" style="border-top:1px solid #CCCCCC;"></td>
+                <td align="right" style="border-bottom:1px solid #CCCCCC; border-top:1px solid #CCCCCC;">GST</td>
+                <td align="right" style="border-bottom:1px solid #CCCCCC; border-top:1px solid #CCCCCC;">{{ $purchase_data->gst_total }}</td>
+              </tr>
+              <tr>
+                <td colspan="5"></td>
+                <td align="right" style="border-bottom:1px solid #CCCCCC;"><strong>Total</strong></td>
+                <td align="right" style="border-bottom:1px solid #CCCCCC;"><strong>{{ $purchase_data->total }}</strong></td>
+              </tr>
+              </tbody>
+              
+            </table>
+            <br>
+			@if(count($purchase_data->row)==1)
+			<div></div>
+			<div></div>
+			<div></div>
+			@endif
+			@if(count($purchase_data->row)==2)
+			<div></div>
+			<div></div>
+			@endif
+			@if(count($purchase_data->row)==3)
+			<div></div>
+			@endif
+            <p style="border-bottom:1px solid #ccc; margin:0; padding:0;"></p>
+			<br>
+            <h2 style="text-align:center; font-size:10px;">DELIVERY DETAILS</h2>
+			
+			<table width="100%" border="0" cellpadding="10" cellspacing="0">
+			<tr>
+			<td style="border-right:1px solid #cccccc;"><b>Delivery Address</b><br>{{$purchase_data->address['delivery_address_street_address']}}<br>{{$purchase_data->address['delivery_address_town_city']}}<br>{{$purchase_data->address['delivery_address_state_region']}}<br>{{$purchase_data->address['delivery_address_zip_code']}}<br>{{$purchase_data->address['delivery_address_country']}}</td>
+			<td style="border-right:1px solid #cccccc;"><b>Kind Attention</b><br>{{$purchase_data->address['attention']}}</td>
+			<td><b>Delivery Instructions</b><br>{{stripslashes($purchase_data->address['instruction'])}}</td>
+			</tr>
+			</table>
+			
+			
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

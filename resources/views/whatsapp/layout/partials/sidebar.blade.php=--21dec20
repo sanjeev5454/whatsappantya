@@ -1,0 +1,60 @@
+<div class="top-bar">
+  <div class="container">
+    <div class="logo-box"><a href="#"><img src="https://themesofwp.com/wpxproduct/assets/images/logo.png" alt=""></a></div>
+    <div class="burger-icon"><a href="javascript:void(0);"><img src="https://themesofwp.com/wpxproduct/assets/images/burger-icon.png" alt=""></a></div>
+    <div class="top-nav">
+      <ul>
+        <li class="{{ (request()->is('whatsapp')) ? 'active' : (request()->is('whatsapp/dashboard')) ? 'active' : (request()->is('whatsapp/edit-message*')) ? 'active' : (request()->is('whatsapp/view-message*')) ? 'active' : '' }}"> <a href="{{ url('whatsapp/dashboard') }}">Templates</a> </li>
+        <li class="{{ (request()->is('whatsapp/add-message')) ? 'active' : '' }}"> <a href="{{ url('whatsapp/add-message') }}">Add Template</a> </li>
+        
+        
+        <li class="menu-dropdown"><a href="javascript:void(0);"><i class="icon md-settings" aria-hidden="true"></i></a>
+   <ul>
+           
+   
+        
+        
+        <li class="{{ (request()->is('whatsapp/recurring-message-listing')) ? 'active' : (request()->is('whatsapp/recurring-edit-message*')) ? 'active' : '' }}"> <a href="{{ url('whatsapp/recurring-message-listing') }}">Schedule Messages</a> </li>
+        <li class="{{ (request()->is('whatsapp/add-recurring-message')) ? 'active' : '' }}"> <a href="{{ url('whatsapp/add-recurring-message') }}">Add a Schedule</a> </li>
+        <li class="{{ (request()->is('whatsapp/contact-details-listing')) ? 'active' : (request()->is('whatsapp/edit-details-contact*')) ? 'active' : '' }}"> <a class="" href="{{ url('whatsapp/contact-details-listing') }}">Contacts Management</a></li>
+        <li class="{{ (request()->is('whatsapp/add-contact-details')) ? 'active' : '' }}"> <a class="" href="{{ url('whatsapp/add-contact-details') }}">Add Contacts</a></li>
+        <li class="{{ (request()->is('whatsapp/contact-listing')) ? 'active' : (request()->is('whatsapp/edit-contact*')) ? 'active' : '' }}"> <a class="" href="{{ url('whatsapp/contact-listing') }}">Groups</a></li>
+        <li class="{{ (request()->is('whatsapp/add-contact')) ? 'active' : '' }}"> <a class="" href="{{ url('whatsapp/add-contact') }}">Add Groups</a></li>
+        
+        <!--<li class="{{ (request()->is('whatsapp/send-message-listing')) ? 'active' : (request()->is('whatsapp/edit-send-message*')) ? 'active' : '' }}">--> 
+        <!--        <a href="{{ url('whatsapp/send-message-listing') }}">--> 
+        <!--                <i class="site-menu-icon md-collection-item" aria-hidden="true"></i>--> 
+        <!--                <span class="site-menu-title">Send Message List</span>--> 
+        <!--            </a>--> 
+        
+        <!--      </li>--> 
+        
+        <!--<li class="{{ (request()->is('whatsapp/add-send-message')) ? 'active' : '' }}">--> 
+        <!--        <a href="{{ url('whatsapp/add-send-message') }}">--> 
+        <!--                <i class="site-menu-icon md-collection-plus" aria-hidden="true"></i>--> 
+        <!--                <span class="site-menu-title">Add Send Message</span>--> 
+        <!--            </a>--> 
+        
+        <!--      </li>-->
+        
+        <li class="{{ (request()->is('whatsapp/recurring-report')) ? 'active' : (request()->is('whatsapp/recurring-report*')) ? 'active' : '' }}"> <a href="{{ url('whatsapp/recurring-report') }}">Reporting</a></li>
+        @if(Auth::user()->user_role==1)
+        <li class="{{ (request()->is('whatsapp/account-management')) ? 'active' :  (request()->is('whatsapp/edit-account-management*')) ? 'active' : '' }}"> <a class="" href="{{ url('whatsapp/account-management') }}">Settings</a></li>
+        <!--<li class="{{ (request()->is('whatsapp/add-account-management')) ? 'active' : '' }}">--> 
+        <!--  <a href="{{ url('whatsapp/add-account-management') }}">--> 
+        <!--          <i class="site-menu-icon md-border-inner" aria-hidden="true"></i>--> 
+        <!--          <span class="site-menu-title">Add Setting</span>--> 
+        <!--      </a>--> 
+        
+        <!--</li>--> 
+        @endif
+        <li> <a onClick="handleSignoutClick()" href="{{ url('logout') }}">Logout</a></li>
+        <!--<li> <a href="{{ url('document/dashboard') }}">Dashboard</a></li>-->
+        
+        </ul>
+   </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>

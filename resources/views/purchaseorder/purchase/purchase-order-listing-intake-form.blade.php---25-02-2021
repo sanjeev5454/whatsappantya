@@ -1,0 +1,485 @@
+@extends('purchaseorder.layout.app')
+@section('title', 'Purchase Order Listing')
+@section('content')
+@include('purchaseorder.layout.partials.sidebar') 
+<!-- Page -->
+<div class="page no-padding-mobile">
+  <div class="page-content container-fluid">    
+    <!-- Panel Table Add Row -->    
+    <div class="panel1">
+      <header class="panel-heading page-heading">
+        <h3 class="panel-title">Purchase Orders</h3>
+        <div class="page-header-actions">
+        <a title="Add Item" class="btn btn-primary" href="{{ url('purchaseorder/add-purchase-order') }}"><i class="icon md-plus" aria-hidden="true"></i> New Purchase Order</a></div></header>
+      <div class="pane-body">
+        <?php if(@Session::get('success')!=''){?>
+        <div class="alert alert-success"> <a href="javascript:void(0);" class="close" data-dismiss="alert">&times;</a> <?php echo Session::get('success');?> </div>
+        <?php } ?>
+        <div class="tab-box-res"><a href="javascript:void(0);">Slect Order List</a></div>
+        <ul class="nav nav-tabs tab-res-tab" id="myTab" role="tablist" style="margin-bottom:10px;">
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing') }}">All ({{ count($purchase_data) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-draft') }}">Draft ({{ count($purchase_data_draft) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-awaiting-approval') }}">Awaiting Approval ({{ count($purchase_data_awaiting) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-approval') }}">Approved ({{ count($purchase_data_approved) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-po-wise') }}">PO Wise</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-invoice-wise') }}">Invoice Wise</a></li>
+          <li class="nav-item"> <a class="nav-link active">Intake</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-item-wise') }}">Item View</a></li>
+        </ul>
+        <form id="intake-form" action="{{url('purchaseorder/purchaseorderIntake')}}" method="post">
+            @csrf
+        <div class="tab-content tab-table-fix" id="myTabContent">
+          <div class="" id="intake" role="tabpanel" aria-labelledby="intake-tab">
+            <div class="search-form-wrap">
+  <div class="search-form-box new-date-form">
+    <div class="date-form  vendor-example">
+      <label for="Vendor">Vendor</label>
+      <input type="text" placeholder="Start Typing..."  autocomplete="off"  required class="form-control hasDatepicker typeahead"  id="vendor" name="vendor">
+    </div>
+    <div class="date-form invoicesmall">
+      <label for="date">Invoice Number</label>
+      <input type="text" required class="form-control hasDatepicker" autocomplete="off"  id="invoice-number" name="invoice_number">
+    </div>
+    <div class="date-form  invoice-datesmall">
+      <label for="delivery-date">Invoice Date</label>
+      <input type="text" class="form-control" id="delivary_date" required autocomplete="off" name="invoice_date">
+    </div>
+    <div class="date-form  invoice-datesmall">
+      <label for="date-receiving">Date of Receiving</label>
+      <input type="text" class="form-control" id="date_receiving" required autocomplete="off" name="date_receiving">
+    </div>
+  </div>
+</div>
+
+<table class="table responsive-table dataTable center-table" id="editableTable1" cellspacing="0">
+  <thead>
+    <tr class="white-space-tr">
+      <th>Item</th>
+      <th width="65">PO#</th>
+      <th width="91">PO Date</th>
+      <th class="center">Q. Ordered</th>
+      <th>Price</th>
+      <th class="center">Q. Received</th>
+      <th>Price</th>
+      <th class="center">Invoice Date</th>
+      <th class="center">Received On</th>
+      <th class="center">Balance Q.</th>
+      <th width="80">Intake</th>
+      <th width="100">Price</th>
+    </tr>
+  </thead>
+  <tbody id="result-data">
+        <tr id="sa-0" class="joy-1000">
+        <td data-table="Item" class="has-input item-td-intake">
+        <select required class="form-control width-full item select2 item-select" cus="1000" rel="item" id="tmp_id_item_0" name="item[]">
+        <option value="">None</option>
+        </select>
+        </td>
+        <td id="po-0" data-table="PO#"></td>
+        <input type="hidden" name="po_number[]" id="po-val-0">
+        <td id="podate-0" data-table="PO Date"></td>
+        <input type="hidden" name="po_date[]" id="podate-val-0">
+        <td id="qorder-0" data-table="Q. Ordered"></td>
+        <input type="hidden" name="qty_ordered[]" id="qorder-val-0">
+        <td id="poprice-0" data-table="Price"></td>
+        <input type="hidden" name="po_price[]" id="poprice-val-0">
+        <td id="qreceived-0" data-table="Q. Received"></td>
+        <input type="hidden" name="qty_received[]" id="qreceived-val-0">
+        <td id="rprice-0" data-table="Price"></td>
+        <input type="hidden" name="received_price[]" id="rprice-val-0">
+        <td id="inv-0" data-table="Invoice Date"></td>
+        <input type="hidden" name="inv[]" id="inv-val-0">
+        <td id="rec-0" data-table="Received On"></td>
+        <input type="hidden" name="rec[]" id="rec-val-0">
+        <td id="bqtn-0" data-table="Balance Q."></td>
+        <input type="hidden" name="balance_qty[]" id="bqtn-val-0">
+        <td data-table="Intake" required="required" class="has-input"><input type="text" id="intake-0" name="intake[]" class="forn-input"></td>
+        <td data-table="Price" required="required" class="has-input"><input type="text" id="intake_price-0" name="intake_price[]" class="forn-input"></td>
+        </tr>
+  </tbody>
+</table> 
+
+<div class="btn-save-box">
+<div class="add-more-contact"> <a href="javascript:void(0);"><i class="icon md-plus" aria-hidden="true"></i> Add Items</a></div>
+<a id="add-row" type="button" href="javascript:void(0);" class="btn btn-primary">Save</a>
+</div>
+          </div>
+        </div>
+        </form>
+      </div>
+    </div>
+    
+    <!-- End Panel Table Add Row --> 
+    
+  </div>
+</div>
+
+<!-- End Page --> 
+
+@endsection 
+
+@section('pagescript') 
+{!!Html::script('https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js')!!} 
+<script type="text/javascript">
+	$(document).ready(function(){
+	// Defining the local dataset
+	var cars = ['{!! $autocomplete !!}'];
+	
+	// Constructing the suggestion engine
+	var cars = new Bloodhound({
+	datumTokenizer: Bloodhound.tokenizers.whitespace,
+	queryTokenizer: Bloodhound.tokenizers.whitespace,
+	local: cars
+	});
+	
+	// Initializing the typeahead
+	$('.typeahead').typeahead({
+	hint: true,
+	highlight: true, /* Enable substring highlighting */
+	minLength: 1 /* Specify minimum characters required for showing result */
+	},
+	{
+	name: 'cars',
+	source: cars
+	});
+	});  
+	</script> 
+	<script>
+$(function(){
+$('.typeahead').on('typeahead:selected', function(evt, item) {
+var typeahead_val = $(this).val();
+$(":input:not([name=vendor])").prop("disabled", false);
+   if(typeahead_val!=''){
+   //$(":input:not([name=contact])").prop("disabled", false);
+   //$("button[name='approve']").prop("disabled", true);
+   //$("input[name='copy_of_staffs[]']").prop( "disabled", true );
+    $.ajax({
+			type: "GET",
+			url: "{{ url('purchaseorder/ajaxTypeheadData')}}/"+typeahead_val,
+			data: {typeahead_val:typeahead_val},
+			success: function(msg){
+			//alert(msg); return false;
+			if(msg!='')
+			{
+			 $('.item').html(msg);
+			}
+			}
+			});
+   }
+});
+});
+</script> 
+<script>
+$(function(){
+$(document).on('keyup','.typeahead', function() {
+var typeahead_val = $(this).val();
+   if(typeahead_val!=''){
+    $.ajax({
+			type: "GET",
+			url: "{{ url('purchaseorder/ajaxTypeheadData')}}/"+typeahead_val,
+			data: {typeahead_val:typeahead_val},
+			success: function(msg){
+			//alert(msg); return false;
+			if(msg!='')
+			{
+			 $('.item').html(msg);
+			 $(":input:not([name=vendor])").prop("disabled", false);
+			 //$(":input:not([name=contact])").prop("disabled", false);
+			 //$("button[name='approve']").prop("disabled", true);
+             //$("input[name='copy_of_staffs[]']").prop( "disabled", true );
+			}else{
+			
+			//$(":input:not([name=contact])").prop("disabled", true);
+			}
+			}
+			});
+   }else{
+   $(":input:not([name=vendor])").prop("disabled", true);
+   }
+});
+});
+</script> 
+{!!Html::script('assets/js/jquery-ui_datepicker.js')!!}
+{!!Html::style('assets/css/jquery-ui_datepicker.css')!!}
+
+<script>
+
+  $(function(){
+
+     $(document).on('click','.change_order_qty',function(){
+         
+         
+         var id = $(this).attr('cus');
+
+		  var order_number = $('.order-number-'+id).val();
+
+		  var item_number = $('.item-number-'+id).val();
+
+		  var order = $('.order-'+id).val();
+
+		  var qty_val = $('.quantity-received-'+id).val();
+		  
+		  var received_date = $('.received-on-data-'+id).val();
+		  
+		  var invoice_number = $('.received-through-invoice-number-'+id).val();
+         
+         var numberOfChecked = $('input:checkbox:checked').length;
+         
+         if(numberOfChecked<=0){
+             alert('Please check Quantity Received.');
+             return false;
+         }else if(received_date==''){
+            alert('Please fill the Received Date.');
+             return false; 
+         }else if(invoice_number==''){
+            alert('Please fill the Invoice Number.');
+             return false; 
+         }else{
+
+	      
+
+		  if(qty_val!='' && qty_val!=0)
+
+		  {
+
+			$.ajax({
+
+			type: "GET",
+
+			url: "{{ url('purchaseorder/ajaxItemQuantityUpdateData')}}/"+qty_val+"/"+order_number+"/"+item_number+"/"+order+"/"+received_date+"/"+invoice_number,
+
+			data: {qty_val:qty_val,order_number:order_number,item_number:item_number,order:order,received_date:received_date,invoice_number:invoice_number},
+
+			success: function(msg){
+
+				//alert(msg); return false;
+
+			if(msg!='')
+
+			{
+
+			$('#'+id+'-status').html('Received');
+
+			$('#'+id+'-received-qty').html(qty_val);
+
+			$('#'+id+'-received-date').html(received_date);
+			
+			$('#'+id+'-received-invoice').html(invoice_number);
+
+			$('.btn-danger').trigger('click');
+
+			}
+
+			}
+
+			});
+
+		  }
+         }
+
+	 });
+	 
+	 $(".show-hide-tab").click(function() {
+		 $(this).toggleClass("show");
+		 $(this).parent().next().toggleClass("display-none");        
+    });
+	
+	$(".tab-box-res a").click(function() {
+		 $(this).parent().next().toggleClass("show");        
+    });
+	
+	$(".tab-res-tab a").click(function() {
+		$(".tab-res-tab").removeClass("show");
+	});
+	
+
+  });
+  
+  </script> 
+
+<script>
+		$(document).ready(function () {
+		$("#date").datepicker({
+		dateFormat: "dd M yy",
+		/*minDate: 0,*/
+		onSelect: function (date) {
+		var date2 = $('#date').datepicker('getDate');
+		date2.setDate(date2.getDate() + 1);
+		//$('#delivary_date').datepicker('setDate', date2);
+		//sets minDate to dt1 date + 1
+		$('#delivary_date').datepicker('option', 'minDate', date2);
+		}
+		});
+		$('#delivary_date').datepicker({
+		dateFormat: "dd M yy",
+// 		minDate: 1,
+		onClose: function () {
+		var dt1 = $('#date').datepicker('getDate');
+		var dt2 = $('#delivary_date').datepicker('getDate');
+		if (dt2 <= dt1) {
+		var minDate = $('#delivary_date').datepicker('option', 'minDate');
+		$('#delivary_date').datepicker('setDate', minDate);
+		}
+		}
+		});
+		$('#date_receiving').datepicker({
+		dateFormat: "dd M yy",
+// 		minDate: 1,
+		});
+		});
+	
+		
+		</script> 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script>
+$('.select2').select2();
+</script>
+
+<script>
+    $(function(){
+        $(document).on('click','.add-more-contact',function(){
+            var select_check = $('.select2').val();
+            var texts = $('.item').map(function(_, el) {
+            return $(el).val();
+            }).get();
+            
+            if(select_check!=''){
+            var rowCount = $('#editableTable1 >tbody >tr').length;
+            var rows = eval(1000)+eval(rowCount);
+             var html = '<tr id="sa-'+rowCount+'" class="joy-'+rows+'"> <td data-table="Item" class="has-input item-td-intake"> <select required class="form-control width-full item select2 item-select" cus="'+rows+'" rel="item" id="tmp_id_item_'+rowCount+'" name="item[]"> <option value="">None</option> </select> </td> <td id="po-'+rowCount+'" data-table="PO#"></td> <input type="hidden" name="po_number[]" id="po-val-'+rowCount+'"> <td id="podate-'+rowCount+'" data-table="PO Date"></td> <input type="hidden" name="po_date[]" id="podate-val-'+rowCount+'"> <td id="qorder-'+rowCount+'" data-table="Q. Ordered"></td> <input type="hidden" name="qty_ordered[]" id="qorder-val-'+rowCount+'"> <td id="poprice-'+rowCount+'" data-table="Price"></td> <input type="hidden" name="po_price[]" id="poprice-val-'+rowCount+'"> <td id="qreceived-'+rowCount+'" data-table="Q. Received"></td> <input type="hidden" name="qty_received[]" id="qreceived-val-'+rowCount+'"> <td id="rprice-'+rowCount+'" data-table="Price"></td> <input type="hidden" name="received_price[]" id="rprice-val-'+rowCount+'"><td id="inv-'+rowCount+'" data-table="Invoice Date"></td> <input type="hidden" name="inv[]" id="inv-val-'+rowCount+'"> <td id="rec-'+rowCount+'" data-table="Received On"></td> <input type="hidden" name="rec[]" id="rec-val-'+rowCount+'"> <td id="bqtn-'+rowCount+'" data-table="Balance Q."></td> <input type="hidden" name="balance_qty[]" id="bqtn-val-'+rowCount+'"> <td data-table="Intake" class="has-input"><input type="text" id="intake-'+rowCount+'" name="intake[]" class="forn-input"></td> <td data-table="Price" class="has-input"><input type="text" id="intake_price-10" name="intake_price[]" class="forn-input"></td> </tr>';
+             $('#result-data').append(html);
+            var typeahead_val = $('input.typeahead.tt-input').val();
+            if(typeahead_val!=''){
+            selectOption(typeahead_val,rowCount);
+            }
+             $('.select2').select2();
+            }else{
+                alert('Please choose the first row item');
+                return false;
+            }
+        });
+    });
+</script>
+
+<script>
+  function selectOption(typeahead_val,rowCount)
+  {
+	$.ajax({
+	type: "GET",
+	url: "{{ url('purchaseorder/ajaxTypeheadData')}}/"+typeahead_val,
+	data: {typeahead_val:typeahead_val},
+	success: function(msg){
+	if(msg!='')
+	{
+	$('#tmp_id_item_'+rowCount).html(msg);
+	}
+	}
+	});
+  }
+  </script>
+
+<script>
+    $(function(){
+        $(document).on('change','.item-select',function(){
+            var id = $(this).attr('cus'); 
+            if(id==0){
+                var id_row = 1000;
+            }else{
+                var id_row = eval(1000)+eval(id);
+            }
+            var item_val = $(this).val();
+            var vendor_name = $('#vendor').val();
+            //alert(id_row);
+            if(id!='' && item_val!='' && vendor_name!='')
+            {
+			$.ajax({
+			type: "GET",
+			url: "{{ url('purchaseorder/ajaxItemIntakeForm')}}/"+item_val+"/"+vendor_name+"/"+id,
+			data: {item_val:item_val,vendor_name:vendor_name},
+			success: function(msg){
+			//alert(msg); return false;
+			if(msg!='')
+			{
+			//$('#sa-'+id).remove();
+			$('.joy-'+id).remove();
+            $('#result-data').append(msg);
+            $('.select2').select2();
+			}
+			}
+			});
+            }
+        });
+    });
+</script>
+<script>
+    $(function(){
+       $(document).on("keyup", ".intake", function() {
+            var id = $(this).attr('id');
+            var cus = id.split("intake-");
+            var data = $(this).val();
+            //alert(cus[1]);
+            var balance_qty = $('#bqtn-'+cus[1]).html();
+            //alert(data+'-'+balance_qty);
+            if(data!='')
+            {
+                if(eval(data)>eval(balance_qty))
+                {
+                //alert('Please enter the intake quantity less than or equal to balance quantity.');
+                //$(this).val('');
+                //return false;
+                $(this).css('border','2px solid red');
+                $(this).css('color','red');
+                }else{
+                $(this).css('border','1px solid #dddddd');
+                $(this).css('color','black');
+                }
+            }
+       }); 
+    });
+</script>
+<script>
+    $(function(){
+       $(document).on('click','#add-row',function(){
+          var vendor = $('#vendor').val();
+          var invoice_number = $('#invoice-number').val();
+          var delivary_date = $('#delivary_date').val();
+          var select_data = $('.select2').val();
+          var date_receiving = $('#date_receiving').val();
+          if(vendor=='')
+          {
+              alert('Please enter vender code.');
+              return false;
+          }else if(invoice_number==''){
+              alert('Please enter invoice number.');
+              return false;
+          }else if(delivary_date==''){
+              alert('Please enter Invoice date.');
+              return false;
+          }else if(date_receiving==''){
+              alert('Please enter Date of Receiving.');
+              return false;
+          }else if(select_data==''){
+              alert('Please choose select item.');
+              return false;
+          }else{
+              $('#intake-form').submit();
+          }
+       }); 
+    });
+    
+    $(document).ready(function () {
+		$(":input:not([name=vendor])").prop("disabled", true);
+		});
+    
+</script>
+
+
+
+
+<style>
+    #ui-id-1{display:none;}
+    .ui-widget-content{display:none;}
+</style>
+
+@stop 

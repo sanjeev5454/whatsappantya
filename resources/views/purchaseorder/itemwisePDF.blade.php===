@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<style>
+* {
+	margin:0;
+	padding:0;
+}
+body * {
+	font-size:10px;
+	padding:0;
+	margin:0;
+	font-family:Arial, Helvetica, sans-serif;
+}
+h2.first {
+	color: #000000;
+	font-size: 12pt;
+	text-align: center;
+}
+.lowercase {
+	text-transform: lowercase;
+}
+.uppercase {
+	text-transform: uppercase;
+}
+.capitalize {
+	text-transform: capitalize;
+}
+/*table {
+	width: 100%;
+	font-size:9px;
+	font-family:Arial, Helvetica, sans-serif;
+	margin-bottom:20px;
+	border-collapse:collapse;
+}
+table, th, td {
+	padding:2px 5px;
+	text-align: center;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:9px;
+	border-collapse:collapse;
+}
+table th {
+	white-space:nowrap;
+}*/
+table.border-table {
+	border-collapse:collapse;
+}
+table.border-table th, table.border-table td {
+	border:.2px solid #000;
+	border-collapse:collapse;
+	vertical-align:middle;
+}
+table.test-table{ border:0px solid #000; border-collapse:separate; }
+table.test-table tr td { border-bottom:1px solid #000; border-top:0 none; border-left:0 none; border-right:0 none; }
+
+</style>
+</head>
+
+<body>
+<table width="100%" border="0" cellpadding="3" cellspacing="0">
+  <tr>
+    <td align="center" valign="middle" style="font-size:20px;"><img src="https://themesofwp.com/wpxproduct/assets/images/logo.png" alt="Antya" style="width:100px; height:30px" />
+      <div style="font-size:9px;">A-14/2, Block A,  Nariana Industrial<br> Area Phase-2,  New Delhi,  Delhi 110028</div></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellpadding="5" cellspacing="0" >
+        <tr>
+          <th style="text-align:center;"><strong>Vendor: </strong> {{ $vendor }}</th>
+        </tr>        
+      </table></td>
+  </tr>
+ <tr>
+     <td>
+         <table class="table responsive-table dataTable center-table po-view border-table" id="editableTable1" cellspacing="0" cellpadding="5" width="100%" bordercolor="#e5e5e5" style=" border-collapse:collapse;">
+  <thead>
+    <tr class="white-space-tr" style="background-color: #e5e5e5;">
+      <th class="Item-th" width="96">Item</th>
+      <th class="Item-th" width="190">Item SKU</th>
+      <th class="po-th" width="190">PO#</th>
+      <th class="pending-quantity-th" width="96">Pending Quantity</th>
+    </tr>
+  </thead>
+ <tbody id="result-data">
+      <?php
+      if(!empty($data_array)){
+          $total_item = 0;
+      foreach($data_array as $array_d){?>
+          <?php
+          $data_val_item = purchaseDataUpdateDetailsItem($array_d);
+          $t=0;
+          foreach($data_val_item as $k=>$data_k){
+         if(($data_k['quantity']-$data_k['qty_received'])>0 && purchase_details($data_k['purchase_order_id'])==1){
+             $c = selectPDFRecordItem($data_k['item'],$vendor);
+         ?>
+         <tr <?php if($t==0){?> class="po-show" <?php }?>>
+        <?php if($t==0){?>
+        <td <?php if($t==0){?> rowspan="<?php echo count($c);?>" class="po-show" <?php }else{ ?> class="po-hide" <?php } ?> data-table="Item"><?php if($t==0){?><?php echo ItemDetails($array_d);?><?php } ?></td>
+        <?php }?>
+        <td data-table="Item SKU"><?php echo ItemSKU($data_k['item']);?></td>
+        <td data-table="PO#">PO-<?php echo $data_k['order_number'];?></td>
+        <td data-table="Pending Quantity"  style="text-align:center"><?php echo $data_k['quantity']-$data_k['qty_received'];?></td>
+        </tr>
+      <?php $t++;$total_item +=$data_k['quantity']-$data_k['qty_received'];}}}}
+      ?>
+      <?php if($total_item>0){?>
+        <tr>
+        <td colspan="3" class="right" style="text-align:right">Total : </td>
+        <td data-table="Total :" style="text-align:center"><strong><?php echo $total_item;?></strong></td>
+        </tr>
+        <?php }else{?>
+        <tr>
+        <td colspan="4" class="no-data-table" align="center">There are no purchase orders to display.</td>
+        </tr>
+        <?php } ?>
+  </tbody>
+</table>
+     </td>
+     </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,251 @@
+@extends('purchaseorder.layout.app')
+@section('title', 'Purchase Order Listing')
+@section('content')
+@include('purchaseorder.layout.partials.sidebar') 
+<!-- Page -->
+<div class="page no-padding-mobile">
+  <div class="page-content container-fluid">    
+    <!-- Panel Table Add Row -->    
+    <div class="panel">
+      <header class="panel-heading page-heading">
+        <h3 class="panel-title">Purchase Orders</h3>
+        <div class="page-header-actions">
+        <a title="Add Item" class="btn btn-primary" href="{{ url('purchaseorder/add-purchase-order') }}"><i class="icon md-plus" aria-hidden="true"></i> New Purchase Order</a></div></header>
+      <div class="pane-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-15">  </div>
+          </div>
+        </div>
+        <?php if(@Session::get('success')!=''){?>
+        <div class="alert alert-success"> <a href="javascript:void(0);" class="close" data-dismiss="alert">&times;</a> <?php echo Session::get('success');?> </div>
+        <?php } ?>
+        <div class="tab-box-res"><a href="javascript:void(0);">Slect Order List</a></div>
+        <ul class="nav nav-tabs tab-res-tab" id="myTab" role="tablist" style="margin-bottom:10px;">
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing') }}">All ({{ count($purchase_data) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-draft') }}">Draft ({{ count($purchase_data_draft) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-awaiting-approval') }}">Awaiting Approval ({{ count($purchase_data_awaiting) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-approval') }}">Approved ({{ count($purchase_data_approved) }})</a> </li>
+          <li class="nav-item"> <a class="nav-link active">PO View</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-invoice-wise') }}">Invoice View</a></li>
+          <li class="nav-item"> <a class="nav-link" href="{{ url('purchaseorder/purchase-order-listing-intake-form') }}">Intake</a> </li>
+        </ul>
+        <div class="tab-content tab-table-fix" id="myTabContent">
+          <div class="" id="billed" role="tabpanel" aria-labelledby="billed-tab">
+            <table class="table responsive-table dataTable" cellspacing="0" id="exampleAddRow1">
+              <thead>
+                <tr>
+                  <th class="s-no-row">#PO</th>
+                  <th class="date-row">PO Date</th>
+                  <!--<th>Delivery Date</th>-->
+                  <!--<th>Items</th>-->
+                  <!--<th>Qty</th>-->
+                  <th>Vendor Name</th>
+                  <!--<th>Status</th>-->
+                  <!--<th>Received Qty</th>-->
+                  <!--<th>Received Date</th>-->
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+              
+              @if(count($purchase_data_items_val)>0)
+              
+              @foreach($purchase_data_items_val as $key=>$data)
+               @php
+              $del = date('Y-m-d',strtotime($data->delivery_date));
+              $late_pink = date('Y-m-d', strtotime('+2 days', strtotime(date('Y-m-d'))));
+              $late = date('Y-m-d');
+              
+              $qty = 0;
+                $rec_q = 0;
+                for($j=1;$j<=count($data->row);$j++)
+                {
+                $rec_q += purchaseOrderDetailsReciveQty($data->row[$j]['item'],$data->order_number,$data->row[$j]['order']);
+                $qty +=$data->row[$j]['quantity'];
+                }
+              
+              @endphp
+              <tr class="gradeA">
+                <td data-table="#PO" class="show-hide-tab"><span>PO-{{ $data['order_number'] }}</span></td>
+                <td data-table="PO Date">{{ purchaseOrderDetails($data['order_number'])->date }}</td>
+                <td data-table="Vendor Name">{{ purchaseOrderDetails($data['order_number'])->contact }}</td>
+                <td class="delivery-status" data-table="Delivery Status">@if($qty==$rec_q)<div class="wrapper-green"></div>@elseif($del<=$late)<div class="wrapper-red"></div>@elseif($del<=$late_pink)<div class="wrapper-pink"></div>@endif</td>
+              </tr>
+              <tr class="display-none has-table">
+                <td colspan="3" align="center">
+              <table class="table responsive-table dataTable" cellspacing="0" cellpadding="0">
+                <tr>
+                <thead>
+                  <th>Items</th>
+                  <th class="center">Q.Ordered</th>
+                  <th>Price</th>
+                  <th class="center">Q.Received</th>
+                  <th>Price</th>
+                  <th>Invoice Number</th>
+                  <th>Invoice Date</th>
+                  </thead>
+                </tr>
+                @for($i=1;$i<=count($data->row);$i++)
+              <tr class="gradeA">
+                <td data-table="Items"><span>{{ ItemDetails($data->row[$i]['item']) }}</span></td>
+                <td class="center" data-table="Qty">{{ $data->row[$i]['quantity'] }}</td>  
+                <td data-table="Price">{{ $data->row[$i]['price'] }}</td>
+               <td  class="center" data-table="Received Qty" id="{{ $data['order_number'] }}-{{ $key }}-received-qty">{{ purchaseOrderDetailsReciveQty($data->row[$i]['item'],$data->order_number,$data->row[$i]['order']) }}</td>
+               <td data-table="Price">{{ purchaseOrderDetailsReciveQtyPrice($data->row[$i]['item'],$data->order_number) }}</td>
+               <td data-table="Invoice Number" id="{{ $data['order_number'] }}-{{ $key }}-received-invoice">{{ purchaseOrderDetailsReciveInvoice($data->row[$i]['item'],$data->order_number,$data->row[$i]['order']) }}</td>
+               <td data-table="Invoice Date" id="{{ $data['order_number'] }}-{{ $key }}-received-date">{{ purchaseOrderDetailsReciveDate($data->row[$i]['item'],$data->order_number,$data->row[$i]['order']) }}</td>
+              </tr>
+              @endfor
+              </table>
+                </td>
+              </tr>
+              
+              @endforeach
+              
+              @else
+              <tr>
+                <td colspan="3" class="no-data-table" align="center">There are no purchase orders to display.</td>
+              </tr>
+              @endif
+                </tbody>
+              
+            </table>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- End Panel Table Add Row --> 
+    
+  </div>
+</div>
+
+<!-- End Page --> 
+
+@endsection 
+
+@section('pagescript') 
+
+
+<script>
+
+  $(function(){
+
+     $(document).on('click','.change_order_qty',function(){
+         
+         
+         var id = $(this).attr('cus');
+
+		  var order_number = $('.order-number-'+id).val();
+
+		  var item_number = $('.item-number-'+id).val();
+
+		  var order = $('.order-'+id).val();
+
+		  var qty_val = $('.quantity-received-'+id).val();
+		  
+		  var received_date = $('.received-on-data-'+id).val();
+		  
+		  var invoice_number = $('.received-through-invoice-number-'+id).val();
+         
+         var numberOfChecked = $('input:checkbox:checked').length;
+         
+         if(numberOfChecked<=0){
+             alert('Please check Quantity Received.');
+             return false;
+         }else if(received_date==''){
+            alert('Please fill the Received Date.');
+             return false; 
+         }else if(invoice_number==''){
+            alert('Please fill the Invoice Number.');
+             return false; 
+         }else{
+
+	      
+
+		  if(qty_val!='' && qty_val!=0)
+
+		  {
+
+			$.ajax({
+
+			type: "GET",
+
+			url: "{{ url('purchaseorder/ajaxItemQuantityUpdateData')}}/"+qty_val+"/"+order_number+"/"+item_number+"/"+order+"/"+received_date+"/"+invoice_number,
+
+			data: {qty_val:qty_val,order_number:order_number,item_number:item_number,order:order,received_date:received_date,invoice_number:invoice_number},
+
+			success: function(msg){
+
+				//alert(msg); return false;
+
+			if(msg!='')
+
+			{
+
+			$('#'+id+'-status').html('Received');
+
+			$('#'+id+'-received-qty').html(qty_val);
+
+			$('#'+id+'-received-date').html(received_date);
+			
+			$('#'+id+'-received-invoice').html(invoice_number);
+
+			$('.btn-danger').trigger('click');
+
+			}
+
+			}
+
+			});
+
+		  }
+         }
+
+	 });
+	 
+	 $(".show-hide-tab").click(function() {
+		 $(this).toggleClass("show");
+		 $(this).parent().next().toggleClass("display-none");        
+    });
+	
+	$(".tab-box-res a").click(function() {
+		 $(this).parent().next().toggleClass("show");        
+    });
+	
+	$(".tab-res-tab a").click(function() {
+		$(".tab-res-tab").removeClass("show");
+	});
+	
+
+  });
+  
+  </script> 
+  <style>
+  .display-none{display:none;}
+  
+  </style>
+  <style>
+        div.wrapper-pink {    
+        height:5px;
+        width:5px;
+        padding:5px;
+        background:pink;
+        }
+        div.wrapper-red {    
+        height:5px;
+        width:5px;
+        padding:5px;
+        background:red;
+        }
+        div.wrapper-green {    
+        height:5px;
+        width:5px;
+        padding:5px;
+        background:green;
+        }
+        </style>
+
+@stop 
